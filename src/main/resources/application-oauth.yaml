@@ -1,0 +1,14 @@
+# Activate with SPRING_PROFILES_ACTIVE=oauth (or --spring.profiles.active=oauth) to run
+# against the OAuth/Keycloak-secured lightweight profile instead of the default no-auth
+# one. See docker/docker-compose.oauth.yaml, docker/keycloak-realm.json, and the README.
+camunda:
+  client:
+    mode: self-managed
+    grpc-address: http://localhost:26500
+    rest-address: http://localhost:8080
+    auth:
+      method: oidc
+      client-id: banking-poc
+      client-secret: demo-banking-poc-secret
+      token-url: http://localhost:18080/realms/camunda-platform/protocol/openid-connect/token
+      audience: banking-poc

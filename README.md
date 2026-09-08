@@ -58,6 +58,42 @@ The app deploys `loan-approval.bpmn`, `risk-scoring.dmn`, and `LoanReviewForm.fo
 cd docker && docker compose down   # add -v to also wipe process data
 ```
 
+## Optional: run with real OAuth authentication
+
+By default the API has no auth (`camunda.client.auth.method: none`, matching the cluster's `unprotectedApi: true`). To instead run against a real OIDC-secured cluster:
+
+**1. Start Camunda 8 with the OAuth overlay** (adds a standalone dev-mode Keycloak on top of the same lightweight stack — no Postgres/Identity needed):
+
+```bash
+cd docker
+ORCHESTRATION_CONFIG_FILE=application-h2-oauth.yaml \
+  docker compose -f docker-compose.yaml -f docker-compose.oauth.yaml up -d
+docker compose -f docker-compose.yaml -f docker-compose.oauth.yaml ps
+```
+
+Keycloak imports `docker/keycloak-realm.json` on startup, which declares two clients: `orchestration` (used by the Orchestration Cluster's own OIDC config for interactive Operate/Tasklist login) and `banking-poc` (a service-account/M2M client this app authenticates as). Verify the API is actually protected:
+
+```bash
+curl -i http://localhost:8080/v2/topology   # -> 401 Unauthorized
+```
+
+**2. Start the app with the `oauth` Spring profile:**
+
+```bash
+export JAVA_HOME=/opt/homebrew/opt/openjdk@21
+SPRING_PROFILES_ACTIVE=oauth mvn spring-boot:run
+```
+
+This activates `src/main/resources/application-oauth.yaml`, which authenticates as `banking-poc` via client-credentials against Keycloak (`http://localhost:18080/realms/camunda-platform`). From here, `POST /loans` behaves exactly as in the no-auth setup.
+
+**Why not `docker-compose-full.yaml`?** Camunda's own official full profile (Keycloak + Identity + Postgres + Elasticsearch) was tried first, and its `component-presets` mechanism turned out to only bootstrap Camunda's own built-in components (`connectors`, `orchestration`, etc.) — not a generic way to register a third-party client. Worse, that specific engine version (`8.9.19`) logged repeated warnings about deprecated legacy Elasticsearch-exporter properties mixed into the same config as the newer unified RDBMS secondary storage, and in practice **nothing was ever actually processed**: deployments and process instances returned success with real keys, but job activation and search queries both came back empty — a genuine bug in that vendored config, unrelated to auth. The lighter setup here (standalone Keycloak, no Identity) sidesteps all of that and was verified end-to-end: unauthenticated requests get 401, the app authenticates and deploys resources, and a submitted loan reaches `COMPLETED` state.
+
+**3. Tear down:**
+
+```bash
+cd docker && docker compose -f docker-compose.yaml -f docker-compose.oauth.yaml down -v
+```
+
 ## Trying it out
 
 Submit a loan application:
@@ -78,4 +114,5 @@ Watch progress in Operate (`http://localhost:8080/operate`) or Tasklist (`http:/
 ## Known gaps (tracked from the Phase 1 design doc)
 
 - Client stubs (`CreditBureauClientStub`, `CoreBankingClientStub`, `NotificationClientStub`) are deterministic fakes, not real integrations — swap them for real REST clients or Camunda Connectors when this goes beyond a PoC.
-- No authentication configured (`camunda.client.auth.method: none`) — fine for a local cluster, not for anything shared.
+- No authentication by default (`camunda.client.auth.method: none`) — fine for a local cluster, not for anything shared. Real OAuth is available as an opt-in profile; see "Optional: run with real OAuth authentication" above. It's still a shared demo secret (`demo-banking-poc-secret`) and a dev-mode Keycloak with no persistent realm data — not production auth, just proof the wiring works.
+- The OAuth setup doesn't cover interactive Operate/Tasklist login (only the app's own M2M authentication was verified) — the `orchestration` client is declared in `keycloak-realm.json` for this but untested.
