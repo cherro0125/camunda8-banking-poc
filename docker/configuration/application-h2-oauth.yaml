@@ -1,0 +1,42 @@
+management.endpoints.configprops.show-values: always
+camunda:
+  backup:
+    webapps:
+      enabled: false
+  system:
+    cpu-thread-count: "3"
+    io-thread-count: "3"
+  security:
+    authentication:
+      method: "oidc"
+      unprotectedApi: false
+      oidc:
+        client-id: "orchestration"
+        client-secret: "secret"
+        issuer-uri: "http://keycloak:18080/realms/camunda-platform"
+        redirect-uri: "http://localhost:8080/sso-callback"
+        username-claim: "preferred_username"
+        client-id-claim: "client_id"
+        audiences:
+          - "orchestration"
+          - "banking-poc"
+        scope: ["openid", "profile", "email"]
+    authorizations:
+      enabled: true
+    initialization:
+      defaultRoles:
+        admin:
+          clients:
+            - "orchestration"
+            - "banking-poc"
+  data:
+    secondary-storage:
+      type: rdbms
+      rdbms:
+        url: jdbc:h2:file:./camunda-data/h2db
+        username: sa
+        password:
+        flushInterval: PT0.5S
+        queueSize: 1000
+  mcp:
+    enabled: true
