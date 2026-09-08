@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="LoanRiskDecisions" name="Loan Risk Decisions" namespace="http://camunda.org/schema/1.0/dmn">
+  <decision id="RiskPoints" name="Risk Points">
+    <variable name="totalPoints" typeRef="number" />
+    <decisionTable id="DecisionTable_RiskPoints" hitPolicy="COLLECT" aggregation="SUM">
+      <input id="Input_CreditScore" label="Credit score">
+        <inputExpression id="InputExpression_CreditScore" typeRef="number">
+          <text>creditScore</text>
+        </inputExpression>
+      </input>
+      <input id="Input_MonthlyIncome" label="Monthly income">
+        <inputExpression id="InputExpression_MonthlyIncome" typeRef="number">
+          <text>monthlyIncome</text>
+        </inputExpression>
+      </input>
+      <input id="Input_ExistingDebtRatio" label="Existing debt ratio">
+        <inputExpression id="InputExpression_ExistingDebtRatio" typeRef="number">
+          <text>existingDebtRatio</text>
+        </inputExpression>
+      </input>
+      <input id="Input_RegionRiskScore" label="Region risk score">
+        <inputExpression id="InputExpression_RegionRiskScore" typeRef="number">
+          <text>regionRiskScore</text>
+        </inputExpression>
+      </input>
+      <output id="Output_Points" label="Points" name="points" typeRef="number" />
+      <rule id="Rule_CreditHigh">
+        <inputEntry id="InputEntry_CreditHigh_1"><text><![CDATA[>= 750]]></text></inputEntry>
+        <inputEntry id="InputEntry_CreditHigh_2"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_CreditHigh_3"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_CreditHigh_4"><text>-</text></inputEntry>
+        <outputEntry id="OutputEntry_CreditHigh"><text>40</text></outputEntry>
+      </rule>
+      <rule id="Rule_CreditMedium">
+        <inputEntry id="InputEntry_CreditMedium_1"><text>[650..749]</text></inputEntry>
+        <inputEntry id="InputEntry_CreditMedium_2"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_CreditMedium_3"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_CreditMedium_4"><text>-</text></inputEntry>
+        <outputEntry id="OutputEntry_CreditMedium"><text>25</text></outputEntry>
+      </rule>
+      <rule id="Rule_CreditLow">
+        <inputEntry id="InputEntry_CreditLow_1"><text><![CDATA[< 650]]></text></inputEntry>
+        <inputEntry id="InputEntry_CreditLow_2"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_CreditLow_3"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_CreditLow_4"><text>-</text></inputEntry>
+        <outputEntry id="OutputEntry_CreditLow"><text>5</text></outputEntry>
+      </rule>
+      <rule id="Rule_IncomeHigh">
+        <inputEntry id="InputEntry_IncomeHigh_1"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_IncomeHigh_2"><text><![CDATA[>= 8000]]></text></inputEntry>
+        <inputEntry id="InputEntry_IncomeHigh_3"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_IncomeHigh_4"><text>-</text></inputEntry>
+        <outputEntry id="OutputEntry_IncomeHigh"><text>20</text></outputEntry>
+      </rule>
+      <rule id="Rule_IncomeMedium">
+        <inputEntry id="InputEntry_IncomeMedium_1"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_IncomeMedium_2"><text>[3000..7999]</text></inputEntry>
+        <inputEntry id="InputEntry_IncomeMedium_3"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_IncomeMedium_4"><text>-</text></inputEntry>
+        <outputEntry id="OutputEntry_IncomeMedium"><text>10</text></outputEntry>
+      </rule>
+      <rule id="Rule_IncomeLow">
+        <inputEntry id="InputEntry_IncomeLow_1"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_IncomeLow_2"><text><![CDATA[< 3000]]></text></inputEntry>
+        <inputEntry id="InputEntry_IncomeLow_3"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_IncomeLow_4"><text>-</text></inputEntry>
+        <outputEntry id="OutputEntry_IncomeLow"><text>0</text></outputEntry>
+      </rule>
+      <rule id="Rule_DebtLow">
+        <inputEntry id="InputEntry_DebtLow_1"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_DebtLow_2"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_DebtLow_3"><text><![CDATA[<= 0.2]]></text></inputEntry>
+        <inputEntry id="InputEntry_DebtLow_4"><text>-</text></inputEntry>
+        <outputEntry id="OutputEntry_DebtLow"><text>20</text></outputEntry>
+      </rule>
+      <rule id="Rule_DebtMedium">
+        <inputEntry id="InputEntry_DebtMedium_1"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_DebtMedium_2"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_DebtMedium_3"><text>(0.2..0.4]</text></inputEntry>
+        <inputEntry id="InputEntry_DebtMedium_4"><text>-</text></inputEntry>
+        <outputEntry id="OutputEntry_DebtMedium"><text>10</text></outputEntry>
+      </rule>
+      <rule id="Rule_DebtHigh">
+        <inputEntry id="InputEntry_DebtHigh_1"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_DebtHigh_2"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_DebtHigh_3"><text><![CDATA[> 0.4]]></text></inputEntry>
+        <inputEntry id="InputEntry_DebtHigh_4"><text>-</text></inputEntry>
+        <outputEntry id="OutputEntry_DebtHigh"><text>0</text></outputEntry>
+      </rule>
+      <rule id="Rule_RegionLow">
+        <inputEntry id="InputEntry_RegionLow_1"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_RegionLow_2"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_RegionLow_3"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_RegionLow_4"><text><![CDATA[<= 30]]></text></inputEntry>
+        <outputEntry id="OutputEntry_RegionLow"><text>20</text></outputEntry>
+      </rule>
+      <rule id="Rule_RegionMedium">
+        <inputEntry id="InputEntry_RegionMedium_1"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_RegionMedium_2"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_RegionMedium_3"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_RegionMedium_4"><text>(30..60]</text></inputEntry>
+        <outputEntry id="OutputEntry_RegionMedium"><text>10</text></outputEntry>
+      </rule>
+      <rule id="Rule_RegionHigh">
+        <inputEntry id="InputEntry_RegionHigh_1"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_RegionHigh_2"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_RegionHigh_3"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_RegionHigh_4"><text><![CDATA[> 60]]></text></inputEntry>
+        <outputEntry id="OutputEntry_RegionHigh"><text>0</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <decision id="RiskCategory" name="Risk Category">
+    <informationRequirement id="InformationRequirement_RiskPoints">
+      <requiredDecision href="#RiskPoints" />
+    </informationRequirement>
+    <decisionTable id="DecisionTable_RiskCategory" hitPolicy="UNIQUE">
+      <input id="Input_TotalPoints" label="Total points">
+        <inputExpression id="InputExpression_TotalPoints" typeRef="number">
+          <text>totalPoints</text>
+        </inputExpression>
+      </input>
+      <output id="Output_RiskCategory" label="Risk category" typeRef="string" />
+      <rule id="Rule_Low">
+        <inputEntry id="InputEntry_Low"><text><![CDATA[>= 70]]></text></inputEntry>
+        <outputEntry id="OutputEntry_Low"><text>"LOW"</text></outputEntry>
+      </rule>
+      <rule id="Rule_Medium">
+        <inputEntry id="InputEntry_Medium"><text>[40..69]</text></inputEntry>
+        <outputEntry id="OutputEntry_Medium"><text>"MEDIUM"</text></outputEntry>
+      </rule>
+      <rule id="Rule_High">
+        <inputEntry id="InputEntry_High"><text><![CDATA[< 40]]></text></inputEntry>
+        <outputEntry id="OutputEntry_High"><text>"HIGH"</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>

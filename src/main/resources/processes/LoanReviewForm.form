@@ -1,0 +1,54 @@
+{
+  "components": [
+    {
+      "type": "text",
+      "text": "### Review loan application\n\nApplicant scored **MEDIUM** risk and requires manual sign-off.",
+      "id": "Text_Header",
+      "layout": { "row": "row_0", "columns": null }
+    },
+    {
+      "type": "textfield",
+      "id": "Field_CustomerId",
+      "key": "customerId",
+      "label": "Customer ID",
+      "readonly": true,
+      "layout": { "row": "row_1", "columns": null }
+    },
+    {
+      "type": "number",
+      "id": "Field_Amount",
+      "key": "amount",
+      "label": "Requested amount",
+      "readonly": true,
+      "layout": { "row": "row_1", "columns": null }
+    },
+    {
+      "type": "textfield",
+      "id": "Field_RiskCategory",
+      "key": "riskCategory",
+      "label": "Risk category",
+      "readonly": true,
+      "layout": { "row": "row_2", "columns": null }
+    },
+    {
+      "type": "checkbox",
+      "id": "Field_Approved",
+      "key": "approved",
+      "label": "Approve this loan?",
+      "layout": { "row": "row_3", "columns": null }
+    },
+    {
+      "type": "textarea",
+      "id": "Field_ReviewNotes",
+      "key": "reviewNotes",
+      "label": "Review notes",
+      "layout": { "row": "row_4", "columns": null }
+    }
+  ],
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.8.0",
+  "exporter": { "name": "Camunda Modeler", "version": "5.34.0" },
+  "schemaVersion": 18,
+  "id": "LoanReviewForm",
+  "type": "default"
+}

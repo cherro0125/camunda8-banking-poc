@@ -1,0 +1,56 @@
+{
+  "$schema": "https://camunda.com/json-schema/cpt-test-cases/8.9/schema.json",
+  "testCases": [
+    {
+      "name": "risk scoring — total exactly 70 hits the LOW boundary",
+      "description": "An applicant scoring exactly 70 points sits at the LOW threshold's lower edge.",
+      "instructions": [
+        {
+          "type": "EVALUATE_DECISION",
+          "decisionDefinitionSelector": { "decisionDefinitionId": "RiskCategory" },
+          "variables": { "creditScore": 780, "monthlyIncome": 9000, "existingDebtRatio": 0.3, "regionRiskScore": 70 }
+        },
+        {
+          "type": "ASSERT_DECISION",
+          "decisionSelector": { "decisionDefinitionId": "RiskCategory" },
+          "output": "LOW",
+          "matchedRules": [1]
+        }
+      ]
+    },
+    {
+      "name": "risk scoring — total exactly 40 hits the MEDIUM lower bound",
+      "description": "An applicant scoring exactly 40 points sits at the MEDIUM range's lower edge.",
+      "instructions": [
+        {
+          "type": "EVALUATE_DECISION",
+          "decisionDefinitionSelector": { "decisionDefinitionId": "RiskCategory" },
+          "variables": { "creditScore": 780, "monthlyIncome": 1000, "existingDebtRatio": 0.5, "regionRiskScore": 70 }
+        },
+        {
+          "type": "ASSERT_DECISION",
+          "decisionSelector": { "decisionDefinitionId": "RiskCategory" },
+          "output": "MEDIUM",
+          "matchedRules": [2]
+        }
+      ]
+    },
+    {
+      "name": "risk scoring — total 35 is scored HIGH",
+      "description": "An applicant just below the MEDIUM threshold is scored HIGH risk.",
+      "instructions": [
+        {
+          "type": "EVALUATE_DECISION",
+          "decisionDefinitionSelector": { "decisionDefinitionId": "RiskCategory" },
+          "variables": { "creditScore": 700, "monthlyIncome": 1000, "existingDebtRatio": 0.5, "regionRiskScore": 40 }
+        },
+        {
+          "type": "ASSERT_DECISION",
+          "decisionSelector": { "decisionDefinitionId": "RiskCategory" },
+          "output": "HIGH",
+          "matchedRules": [3]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+# CPT scenarios drive every job manually (COMPLETE_JOB / THROW_BPMN_ERROR_FROM_JOB),
+# so the real @JobWorker beans must not race the test for the same jobs.
+camunda:
+  client:
+    worker:
+      defaults:
+        enabled: false

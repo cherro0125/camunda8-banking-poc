@@ -1,0 +1,206 @@
+{
+  "$schema": "https://camunda.com/json-schema/cpt-test-cases/8.9/schema.json",
+  "testCases": [
+    {
+      "name": "low risk applicant — auto-approved and disbursed",
+      "description": "A strong applicant scores LOW risk and is disbursed without human review.",
+      "instructions": [
+        {
+          "type": "CREATE_PROCESS_INSTANCE",
+          "processDefinitionSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "variables": { "customerId": "cust-low", "amount": 5000 }
+        },
+        {
+          "type": "COMPLETE_JOB",
+          "jobSelector": { "elementId": "Task_CreditCheck" },
+          "variables": { "creditScore": 780, "monthlyIncome": 9000, "existingDebtRatio": 0.1, "regionRiskScore": 10 }
+        },
+        {
+          "type": "ASSERT_ELEMENT_INSTANCES",
+          "processInstanceSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "elementSelectors": [{ "elementId": "Task_Disbursement" }],
+          "state": "IS_ACTIVE"
+        },
+        {
+          "type": "COMPLETE_JOB",
+          "jobSelector": { "elementId": "Task_Disbursement" },
+          "variables": { "disbursementRef": "tx-low" }
+        },
+        {
+          "type": "ASSERT_PROCESS_INSTANCE",
+          "processInstanceSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "state": "IS_COMPLETED"
+        },
+        {
+          "type": "ASSERT_ELEMENT_INSTANCES",
+          "processInstanceSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "elementSelectors": [{ "elementId": "EndEvent_Approved" }],
+          "state": "IS_COMPLETED"
+        }
+      ]
+    },
+    {
+      "name": "high risk applicant — auto-rejected",
+      "description": "A weak applicant scores HIGH risk and is rejected without human review.",
+      "instructions": [
+        {
+          "type": "CREATE_PROCESS_INSTANCE",
+          "processDefinitionSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "variables": { "customerId": "cust-high", "amount": 2000 }
+        },
+        {
+          "type": "COMPLETE_JOB",
+          "jobSelector": { "elementId": "Task_CreditCheck" },
+          "variables": { "creditScore": 500, "monthlyIncome": 1500, "existingDebtRatio": 0.6, "regionRiskScore": 80 }
+        },
+        {
+          "type": "ASSERT_PROCESS_INSTANCE",
+          "processInstanceSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "state": "IS_COMPLETED"
+        },
+        {
+          "type": "ASSERT_ELEMENT_INSTANCES",
+          "processInstanceSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "elementSelectors": [{ "elementId": "EndEvent_Rejected" }],
+          "state": "IS_COMPLETED"
+        }
+      ]
+    },
+    {
+      "name": "medium risk applicant — loan officer approves",
+      "description": "A borderline applicant is routed to manual review and the officer approves the loan.",
+      "instructions": [
+        {
+          "type": "CREATE_PROCESS_INSTANCE",
+          "processDefinitionSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "variables": { "customerId": "cust-medium-approve", "amount": 3000 }
+        },
+        {
+          "type": "COMPLETE_JOB",
+          "jobSelector": { "elementId": "Task_CreditCheck" },
+          "variables": { "creditScore": 700, "monthlyIncome": 5000, "existingDebtRatio": 0.3, "regionRiskScore": 40 }
+        },
+        {
+          "type": "ASSERT_ELEMENT_INSTANCES",
+          "processInstanceSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "elementSelectors": [{ "elementId": "UserTask_ManualReview" }],
+          "state": "IS_ACTIVE"
+        },
+        {
+          "type": "COMPLETE_USER_TASK",
+          "userTaskSelector": { "elementId": "UserTask_ManualReview" },
+          "variables": { "approved": true, "reviewNotes": "Looks fine" }
+        },
+        {
+          "type": "ASSERT_ELEMENT_INSTANCES",
+          "processInstanceSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "elementSelectors": [{ "elementId": "Task_Disbursement" }],
+          "state": "IS_ACTIVE"
+        },
+        {
+          "type": "COMPLETE_JOB",
+          "jobSelector": { "elementId": "Task_Disbursement" },
+          "variables": { "disbursementRef": "tx-medium-approve" }
+        },
+        {
+          "type": "ASSERT_PROCESS_INSTANCE",
+          "processInstanceSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "state": "IS_COMPLETED"
+        },
+        {
+          "type": "ASSERT_ELEMENT_INSTANCES",
+          "processInstanceSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "elementSelectors": [{ "elementId": "EndEvent_Approved" }],
+          "state": "IS_COMPLETED"
+        }
+      ]
+    },
+    {
+      "name": "medium risk applicant — loan officer denies",
+      "description": "A borderline applicant is routed to manual review and the officer denies the loan.",
+      "instructions": [
+        {
+          "type": "CREATE_PROCESS_INSTANCE",
+          "processDefinitionSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "variables": { "customerId": "cust-medium-deny", "amount": 4000 }
+        },
+        {
+          "type": "COMPLETE_JOB",
+          "jobSelector": { "elementId": "Task_CreditCheck" },
+          "variables": { "creditScore": 700, "monthlyIncome": 5000, "existingDebtRatio": 0.3, "regionRiskScore": 40 }
+        },
+        {
+          "type": "ASSERT_ELEMENT_INSTANCES",
+          "processInstanceSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "elementSelectors": [{ "elementId": "UserTask_ManualReview" }],
+          "state": "IS_ACTIVE"
+        },
+        {
+          "type": "COMPLETE_USER_TASK",
+          "userTaskSelector": { "elementId": "UserTask_ManualReview" },
+          "variables": { "approved": false, "reviewNotes": "Insufficient documentation" }
+        },
+        {
+          "type": "ASSERT_PROCESS_INSTANCE",
+          "processInstanceSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "state": "IS_COMPLETED"
+        },
+        {
+          "type": "ASSERT_ELEMENT_INSTANCES",
+          "processInstanceSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "elementSelectors": [{ "elementId": "EndEvent_Rejected" }],
+          "state": "IS_COMPLETED"
+        }
+      ]
+    },
+    {
+      "name": "disbursement fails — customer is compensated",
+      "description": "An approved disbursement fails at the core banking system and the customer is notified instead.",
+      "instructions": [
+        {
+          "type": "CREATE_PROCESS_INSTANCE",
+          "processDefinitionSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "variables": { "customerId": "cust-disbursement-fail", "amount": 1000 }
+        },
+        {
+          "type": "COMPLETE_JOB",
+          "jobSelector": { "elementId": "Task_CreditCheck" },
+          "variables": { "creditScore": 780, "monthlyIncome": 9000, "existingDebtRatio": 0.1, "regionRiskScore": 10 }
+        },
+        {
+          "type": "ASSERT_ELEMENT_INSTANCES",
+          "processInstanceSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "elementSelectors": [{ "elementId": "Task_Disbursement" }],
+          "state": "IS_ACTIVE"
+        },
+        {
+          "type": "THROW_BPMN_ERROR_FROM_JOB",
+          "jobSelector": { "elementId": "Task_Disbursement" },
+          "errorCode": "DISBURSEMENT_FAILED"
+        },
+        {
+          "type": "ASSERT_ELEMENT_INSTANCES",
+          "processInstanceSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "elementSelectors": [{ "elementId": "Task_Compensate" }],
+          "state": "IS_ACTIVE"
+        },
+        {
+          "type": "COMPLETE_JOB",
+          "jobSelector": { "elementId": "Task_Compensate" },
+          "variables": {}
+        },
+        {
+          "type": "ASSERT_PROCESS_INSTANCE",
+          "processInstanceSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "state": "IS_COMPLETED"
+        },
+        {
+          "type": "ASSERT_ELEMENT_INSTANCES",
+          "processInstanceSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "elementSelectors": [{ "elementId": "EndEvent_Compensated" }],
+          "state": "IS_COMPLETED"
+        }
+      ]
+    }
+  ]
+}
