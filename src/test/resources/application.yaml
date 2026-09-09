@@ -5,3 +5,10 @@ camunda:
     worker:
       defaults:
         enabled: false
+
+# CPT scenarios correlate the disbursement-confirmation message directly
+# (CORRELATE_MESSAGE), so no real Kafka broker is needed - disable the
+# CoreBankingKafkaSimulator bean entirely for tests (KafkaAutoConfiguration
+# itself must stay enabled so unrelated auto-configured beans still resolve).
+core-banking-simulator:
+  enabled: false

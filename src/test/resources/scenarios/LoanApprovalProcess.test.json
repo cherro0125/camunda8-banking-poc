@@ -3,7 +3,7 @@
   "testCases": [
     {
       "name": "low risk applicant — auto-approved and disbursed",
-      "description": "A strong applicant scores LOW risk and is disbursed without human review.",
+      "description": "A strong applicant scores LOW risk and the async disbursement confirms successfully without human review.",
       "instructions": [
         {
           "type": "CREATE_PROCESS_INSTANCE",
@@ -18,13 +18,25 @@
         {
           "type": "ASSERT_ELEMENT_INSTANCES",
           "processInstanceSelector": { "processDefinitionId": "LoanApprovalProcess" },
-          "elementSelectors": [{ "elementId": "Task_Disbursement" }],
+          "elementSelectors": [{ "elementId": "Task_PublishDisbursementRequest" }],
           "state": "IS_ACTIVE"
         },
         {
           "type": "COMPLETE_JOB",
-          "jobSelector": { "elementId": "Task_Disbursement" },
-          "variables": { "disbursementRef": "tx-low" }
+          "jobSelector": { "elementId": "Task_PublishDisbursementRequest" },
+          "variables": {}
+        },
+        {
+          "type": "ASSERT_ELEMENT_INSTANCES",
+          "processInstanceSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "elementSelectors": [{ "elementId": "Event_WaitDisbursementConfirmation" }],
+          "state": "IS_ACTIVE"
+        },
+        {
+          "type": "CORRELATE_MESSAGE",
+          "name": "disbursement-confirmed",
+          "correlationKey": "cust-low",
+          "variables": { "disbursementSuccess": true, "disbursementRef": "tx-low" }
         },
         {
           "type": "ASSERT_PROCESS_INSTANCE",
@@ -68,7 +80,7 @@
     },
     {
       "name": "medium risk applicant — loan officer approves",
-      "description": "A borderline applicant is routed to manual review and the officer approves the loan.",
+      "description": "A borderline applicant is routed to manual review, the officer approves, and the async disbursement confirms successfully.",
       "instructions": [
         {
           "type": "CREATE_PROCESS_INSTANCE",
@@ -94,13 +106,19 @@
         {
           "type": "ASSERT_ELEMENT_INSTANCES",
           "processInstanceSelector": { "processDefinitionId": "LoanApprovalProcess" },
-          "elementSelectors": [{ "elementId": "Task_Disbursement" }],
+          "elementSelectors": [{ "elementId": "Task_PublishDisbursementRequest" }],
           "state": "IS_ACTIVE"
         },
         {
           "type": "COMPLETE_JOB",
-          "jobSelector": { "elementId": "Task_Disbursement" },
-          "variables": { "disbursementRef": "tx-medium-approve" }
+          "jobSelector": { "elementId": "Task_PublishDisbursementRequest" },
+          "variables": {}
+        },
+        {
+          "type": "CORRELATE_MESSAGE",
+          "name": "disbursement-confirmed",
+          "correlationKey": "cust-medium-approve",
+          "variables": { "disbursementSuccess": true, "disbursementRef": "tx-medium-approve" }
         },
         {
           "type": "ASSERT_PROCESS_INSTANCE",
@@ -155,7 +173,7 @@
     },
     {
       "name": "disbursement fails — customer is compensated",
-      "description": "An approved disbursement fails at the core banking system and the customer is notified instead.",
+      "description": "An approved disbursement's async confirmation reports failure and the customer is notified instead.",
       "instructions": [
         {
           "type": "CREATE_PROCESS_INSTANCE",
@@ -170,13 +188,25 @@
         {
           "type": "ASSERT_ELEMENT_INSTANCES",
           "processInstanceSelector": { "processDefinitionId": "LoanApprovalProcess" },
-          "elementSelectors": [{ "elementId": "Task_Disbursement" }],
+          "elementSelectors": [{ "elementId": "Task_PublishDisbursementRequest" }],
           "state": "IS_ACTIVE"
         },
         {
-          "type": "THROW_BPMN_ERROR_FROM_JOB",
-          "jobSelector": { "elementId": "Task_Disbursement" },
-          "errorCode": "DISBURSEMENT_FAILED"
+          "type": "COMPLETE_JOB",
+          "jobSelector": { "elementId": "Task_PublishDisbursementRequest" },
+          "variables": {}
+        },
+        {
+          "type": "ASSERT_ELEMENT_INSTANCES",
+          "processInstanceSelector": { "processDefinitionId": "LoanApprovalProcess" },
+          "elementSelectors": [{ "elementId": "Event_WaitDisbursementConfirmation" }],
+          "state": "IS_ACTIVE"
+        },
+        {
+          "type": "CORRELATE_MESSAGE",
+          "name": "disbursement-confirmed",
+          "correlationKey": "cust-disbursement-fail",
+          "variables": { "disbursementSuccess": false, "disbursementFailureReason": "Core banking rejected transfer" }
         },
         {
           "type": "ASSERT_ELEMENT_INSTANCES",
