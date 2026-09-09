@@ -1,0 +1,44 @@
+# Overlay for the lightweight docker-compose.yaml that adds a standalone Redpanda broker
+# (Kafka-API-compatible, no Zookeeper) for the async disbursement flow: the process
+# publishes to "disbursement-requests" and waits on "disbursement-confirmations" via
+# the Kafka Outbound/Inbound Connector templates applied to loan-approval.bpmn.
+#
+# Usage:
+#   docker compose -f docker-compose.yaml -f docker-compose.kafka.yaml up -d
+#
+# "internal" listener (redpanda:9092) is what the Connectors runtime container uses.
+# "external" listener (localhost:19092) is what this app's own Kafka simulator
+# (CoreBankingKafkaSimulator, running on the host) uses to stand in for the real
+# core banking system's Kafka consumer/producer.
+services:
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v25.2.1
+    container_name: redpanda
+    command:
+      - redpanda
+      - start
+      - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
+      - --advertise-kafka-addr internal://redpanda:9092,external://localhost:19092
+      - --rpc-addr redpanda:33145
+      - --advertise-rpc-addr redpanda:33145
+      - --mode dev-container
+      - --smp 1
+      - --default-log-level=info
+    ports:
+      - "19092:19092"
+      - "9644:9644"
+    healthcheck:
+      test: ["CMD-SHELL", "rpk cluster health | grep -q 'Healthy:.*true'"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 15s
+    networks:
+      - camunda
+
+  connectors:
+    depends_on:
+      redpanda:
+        condition: service_healthy
+    networks:
+      - camunda

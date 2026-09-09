@@ -11,6 +11,10 @@ camunda:
       grpc-address: http://localhost:26500
       rest-address: http://localhost:8080
 
+spring:
+  kafka:
+    bootstrap-servers: localhost:19092
+
 logging:
   level:
     io.camunda: INFO

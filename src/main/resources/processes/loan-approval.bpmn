@@ -58,34 +58,52 @@
       <bpmn:incoming>Flow_Approved</bpmn:incoming>
       <bpmn:outgoing>Flow_ToDisbursement</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_ToDisbursement" sourceRef="Gateway_MergeDisbursement" targetRef="Task_Disbursement" />
+    <bpmn:sequenceFlow id="Flow_ToDisbursement" sourceRef="Gateway_MergeDisbursement" targetRef="Task_PublishDisbursementRequest" />
     <bpmn:exclusiveGateway id="Gateway_MergeRejected" name="Merge to rejected">
       <bpmn:incoming>Flow_HighRisk</bpmn:incoming>
       <bpmn:incoming>Flow_Denied</bpmn:incoming>
       <bpmn:outgoing>Flow_ToRejected</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_ToRejected" sourceRef="Gateway_MergeRejected" targetRef="EndEvent_Rejected" />
-    <bpmn:serviceTask id="Task_Disbursement" name="Disburse funds">
+    <bpmn:serviceTask id="Task_PublishDisbursementRequest" name="Publish disbursement request" zeebe:modelerTemplate="io.camunda.connectors.KAFKA.v1" zeebe:modelerTemplateVersion="6" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMTgnIGhlaWdodD0nMTgnIHZpZXdCb3g9JzAgMCAyNTYgNDE2JyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHByZXNlcnZlQXNwZWN0UmF0aW89J3hNaWRZTWlkJz4KICAgIDxwYXRoIGQ9J00yMDEuODE2IDIzMC4yMTZjLTE2LjE4NiAwLTMwLjY5NyA3LjE3MS00MC42MzQgMTguNDYxbC0yNS40NjMtMTguMDI2YzIuNzAzLTcuNDQyIDQuMjU1LTE1LjQzMyA0LjI1NS0yMy43OTcgMC04LjIxOS0xLjQ5OC0xNi4wNzYtNC4xMTItMjMuNDA4bDI1LjQwNi0xNy44MzVjOS45MzYgMTEuMjMzIDI0LjQwOSAxOC4zNjUgNDAuNTQ4IDE4LjM2NSAyOS44NzUgMCA1NC4xODQtMjQuMzA1IDU0LjE4NC01NC4xODQgMC0yOS44NzktMjQuMzA5LTU0LjE4NC01NC4xODQtNTQuMTg0LTI5Ljg3NSAwLTU0LjE4NCAyNC4zMDUtNTQuMTg0IDU0LjE4NCAwIDUuMzQ4LjgwOCAxMC41MDUgMi4yNTggMTUuMzg5bC0yNS40MjMgMTcuODQ0Yy0xMC42Mi0xMy4xNzUtMjUuOTExLTIyLjM3NC00My4zMzMtMjUuMTgydi0zMC42NGMyNC41NDQtNS4xNTUgNDMuMDM3LTI2Ljk2MiA0My4wMzctNTMuMDE5QzEyNC4xNzEgMjQuMzA1IDk5Ljg2MiAwIDY5Ljk4NyAwIDQwLjExMiAwIDE1LjgwMyAyNC4zMDUgMTUuODAzIDU0LjE4NGMwIDI1LjcwOCAxOC4wMTQgNDcuMjQ2IDQyLjA2NyA1Mi43Njl2MzEuMDM4QzI1LjA0NCAxNDMuNzUzIDAgMTcyLjQwMSAwIDIwNi44NTRjMCAzNC42MjEgMjUuMjkyIDYzLjM3NCA1OC4zNTUgNjguOTR2MzIuNzc0Yy0yNC4yOTkgNS4zNDEtNDIuNTUyIDI3LjAxMS00Mi41NTIgNTIuODk0IDAgMjkuODc5IDI0LjMwOSA1NC4xODQgNTQuMTg0IDU0LjE4NCAyOS44NzUgMCA1NC4xODQtMjQuMzA1IDU0LjE4NC01NC4xODQgMC0yNS44ODMtMTguMjUzLTQ3LjU1My00Mi41NTItNTIuODk0di0zMi43NzVhNjkuOTY1IDY5Ljk2NSAwIDAgMCA0Mi42LTI0Ljc3NmwyNS42MzMgMTguMTQzYy0xLjQyMyA0Ljg0LTIuMjIgOS45NDYtMi4yMiAxNS4yNCAwIDI5Ljg3OSAyNC4zMDkgNTQuMTg0IDU0LjE4NCA1NC4xODQgMjkuODc1IDAgNTQuMTg0LTI0LjMwNSA1NC4xODQtNTQuMTg0IDAtMjkuODc5LTI0LjMwOS01NC4xODQtNTQuMTg0LTU0LjE4NHptMC0xMjYuNjk1YzE0LjQ4NyAwIDI2LjI3IDExLjc4OCAyNi4yNyAyNi4yNzFzLTExLjc4MyAyNi4yNy0yNi4yNyAyNi4yNy0yNi4yNy0xMS43ODctMjYuMjctMjYuMjdjMC0xNC40ODMgMTEuNzgzLTI2LjI3MSAyNi4yNy0yNi4yNzF6bS0xNTguMS00OS4zMzdjMC0xNC40ODMgMTEuNzg0LTI2LjI3IDI2LjI3MS0yNi4yN3MyNi4yNyAxMS43ODcgMjYuMjcgMjYuMjdjMCAxNC40ODMtMTEuNzgzIDI2LjI3LTI2LjI3IDI2LjI3cy0yNi4yNzEtMTEuNzg3LTI2LjI3MS0yNi4yN3ptNTIuNTQxIDMwNy4yNzhjMCAxNC40ODMtMTEuNzgzIDI2LjI3LTI2LjI3IDI2LjI3cy0yNi4yNzEtMTEuNzg3LTI2LjI3MS0yNi4yN2MwLTE0LjQ4MyAxMS43ODQtMjYuMjcgMjYuMjcxLTI2LjI3czI2LjI3IDExLjc4NyAyNi4yNyAyNi4yN3ptLTI2LjI3Mi0xMTcuOTdjLTIwLjIwNSAwLTM2LjY0Mi0xNi40MzQtMzYuNjQyLTM2LjYzOCAwLTIwLjIwNSAxNi40MzctMzYuNjQyIDM2LjY0Mi0zNi42NDIgMjAuMjA0IDAgMzYuNjQxIDE2LjQzNyAzNi42NDEgMzYuNjQyIDAgMjAuMjA0LTE2LjQzNyAzNi42MzgtMzYuNjQxIDM2LjYzOHptMTMxLjgzMSA2Ny4xNzljLTE0LjQ4NyAwLTI2LjI3LTExLjc4OC0yNi4yNy0yNi4yNzFzMTEuNzgzLTI2LjI3IDI2LjI3LTI2LjI3IDI2LjI3IDExLjc4NyAyNi4yNyAyNi4yN2MwIDE0LjQ4My0xMS43ODMgMjYuMjcxLTI2LjI3IDI2LjI3MXonCiAgICAgICAgICBzdHlsZT0nZmlsbDojMjMxZjIwJy8+Cjwvc3ZnPg==">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="disburse-funds" retries="3" />
+        <zeebe:taskDefinition type="io.camunda:connector-kafka:1" retries="3" />
+        <zeebe:ioMapping>
+          <zeebe:input source="redpanda:9092" target="topic.bootstrapServers" />
+          <zeebe:input source="disbursement-requests" target="topic.topicName" />
+          <zeebe:input source="noSchema" target="schemaStrategy.type" />
+          <zeebe:input source="=customerId" target="message.key" />
+          <zeebe:input source="={customerId: customerId, amount: amount}" target="message.value" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="elementTemplateVersion" value="6" />
+          <zeebe:header key="elementTemplateId" value="io.camunda.connectors.KAFKA.v1" />
+          <zeebe:header key="resultVariable" value="kafkaPublishResult" />
+          <zeebe:header key="retryBackoff" value="PT30S" />
+        </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_ToDisbursement</bpmn:incoming>
-      <bpmn:outgoing>Flow_ToApproved</bpmn:outgoing>
+      <bpmn:outgoing>Flow_ToWaitConfirmation</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:boundaryEvent id="Boundary_DisbursementFailed" name="Disbursement failed" attachedToRef="Task_Disbursement">
-      <bpmn:outgoing>Flow_ToCompensate</bpmn:outgoing>
-      <bpmn:errorEventDefinition id="ErrorEventDefinition_Disbursement" errorRef="Error_DisbursementFailed" />
-    </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="Flow_ToApproved" sourceRef="Task_Disbursement" targetRef="EndEvent_Approved" />
+    <bpmn:sequenceFlow id="Flow_ToWaitConfirmation" sourceRef="Task_PublishDisbursementRequest" targetRef="Event_WaitDisbursementConfirmation" />
+    <bpmn:sequenceFlow id="Flow_ToDisbursementGateway" sourceRef="Event_WaitDisbursementConfirmation" targetRef="Gateway_DisbursementOutcome" />
+    <bpmn:exclusiveGateway id="Gateway_DisbursementOutcome" name="Disbursement succeeded?" default="Flow_DisbursementFailed">
+      <bpmn:incoming>Flow_ToDisbursementGateway</bpmn:incoming>
+      <bpmn:outgoing>Flow_DisbursementSucceeded</bpmn:outgoing>
+      <bpmn:outgoing>Flow_DisbursementFailed</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_DisbursementSucceeded" name="succeeded" sourceRef="Gateway_DisbursementOutcome" targetRef="EndEvent_Approved">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=disbursementSuccess = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_DisbursementFailed" name="failed (default)" sourceRef="Gateway_DisbursementOutcome" targetRef="Task_Compensate" />
     <bpmn:endEvent id="EndEvent_Approved" name="Loan approved">
-      <bpmn:incoming>Flow_ToApproved</bpmn:incoming>
+      <bpmn:incoming>Flow_DisbursementSucceeded</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_ToCompensate" sourceRef="Boundary_DisbursementFailed" targetRef="Task_Compensate" />
     <bpmn:serviceTask id="Task_Compensate" name="Notify and compensate customer">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="compensate-disbursement" retries="3" />
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_ToCompensate</bpmn:incoming>
+      <bpmn:incoming>Flow_DisbursementFailed</bpmn:incoming>
       <bpmn:outgoing>Flow_ToCompensated</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_ToCompensated" sourceRef="Task_Compensate" targetRef="EndEvent_Compensated" />
@@ -95,8 +113,34 @@
     <bpmn:endEvent id="EndEvent_Rejected" name="Loan rejected">
       <bpmn:incoming>Flow_ToRejected</bpmn:incoming>
     </bpmn:endEvent>
+    <bpmn:intermediateCatchEvent id="Event_WaitDisbursementConfirmation" name="Wait for disbursement confirmation" zeebe:modelerTemplate="io.camunda.connectors.inbound.KafkaIntermediate.v1" zeebe:modelerTemplateVersion="7" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMTgnIGhlaWdodD0nMTgnIHZpZXdCb3g9JzAgMCAyNTYgNDE2JyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHByZXNlcnZlQXNwZWN0UmF0aW89J3hNaWRZTWlkJz4KICAgIDxwYXRoIGQ9J00yMDEuODE2IDIzMC4yMTZjLTE2LjE4NiAwLTMwLjY5NyA3LjE3MS00MC42MzQgMTguNDYxbC0yNS40NjMtMTguMDI2YzIuNzAzLTcuNDQyIDQuMjU1LTE1LjQzMyA0LjI1NS0yMy43OTcgMC04LjIxOS0xLjQ5OC0xNi4wNzYtNC4xMTItMjMuNDA4bDI1LjQwNi0xNy44MzVjOS45MzYgMTEuMjMzIDI0LjQwOSAxOC4zNjUgNDAuNTQ4IDE4LjM2NSAyOS44NzUgMCA1NC4xODQtMjQuMzA1IDU0LjE4NC01NC4xODQgMC0yOS44NzktMjQuMzA5LTU0LjE4NC01NC4xODQtNTQuMTg0LTI5Ljg3NSAwLTU0LjE4NCAyNC4zMDUtNTQuMTg0IDU0LjE4NCAwIDUuMzQ4LjgwOCAxMC41MDUgMi4yNTggMTUuMzg5bC0yNS40MjMgMTcuODQ0Yy0xMC42Mi0xMy4xNzUtMjUuOTExLTIyLjM3NC00My4zMzMtMjUuMTgydi0zMC42NGMyNC41NDQtNS4xNTUgNDMuMDM3LTI2Ljk2MiA0My4wMzctNTMuMDE5QzEyNC4xNzEgMjQuMzA1IDk5Ljg2MiAwIDY5Ljk4NyAwIDQwLjExMiAwIDE1LjgwMyAyNC4zMDUgMTUuODAzIDU0LjE4NGMwIDI1LjcwOCAxOC4wMTQgNDcuMjQ2IDQyLjA2NyA1Mi43Njl2MzEuMDM4QzI1LjA0NCAxNDMuNzUzIDAgMTcyLjQwMSAwIDIwNi44NTRjMCAzNC42MjEgMjUuMjkyIDYzLjM3NCA1OC4zNTUgNjguOTR2MzIuNzc0Yy0yNC4yOTkgNS4zNDEtNDIuNTUyIDI3LjAxMS00Mi41NTIgNTIuODk0IDAgMjkuODc5IDI0LjMwOSA1NC4xODQgNTQuMTg0IDU0LjE4NCAyOS44NzUgMCA1NC4xODQtMjQuMzA1IDU0LjE4NC01NC4xODQgMC0yNS44ODMtMTguMjUzLTQ3LjU1My00Mi41NTItNTIuODk0di0zMi43NzVhNjkuOTY1IDY5Ljk2NSAwIDAgMCA0Mi42LTI0Ljc3NmwyNS42MzMgMTguMTQzYy0xLjQyMyA0Ljg0LTIuMjIgOS45NDYtMi4yMiAxNS4yNCAwIDI5Ljg3OSAyNC4zMDkgNTQuMTg0IDU0LjE4NCA1NC4xODQgMjkuODc1IDAgNTQuMTg0LTI0LjMwNSA1NC4xODQtNTQuMTg0IDAtMjkuODc5LTI0LjMwOS01NC4xODQtNTQuMTg0LTU0LjE4NHptMC0xMjYuNjk1YzE0LjQ4NyAwIDI2LjI3IDExLjc4OCAyNi4yNyAyNi4yNzFzLTExLjc4MyAyNi4yNy0yNi4yNyAyNi4yNy0yNi4yNy0xMS43ODctMjYuMjctMjYuMjdjMC0xNC40ODMgMTEuNzgzLTI2LjI3MSAyNi4yNy0yNi4yNzF6bS0xNTguMS00OS4zMzdjMC0xNC40ODMgMTEuNzg0LTI2LjI3IDI2LjI3MS0yNi4yN3MyNi4yNyAxMS43ODcgMjYuMjcgMjYuMjdjMCAxNC40ODMtMTEuNzgzIDI2LjI3LTI2LjI3IDI2LjI3cy0yNi4yNzEtMTEuNzg3LTI2LjI3MS0yNi4yN3ptNTIuNTQxIDMwNy4yNzhjMCAxNC40ODMtMTEuNzgzIDI2LjI3LTI2LjI3IDI2LjI3cy0yNi4yNzEtMTEuNzg3LTI2LjI3MS0yNi4yN2MwLTE0LjQ4MyAxMS43ODQtMjYuMjcgMjYuMjcxLTI2LjI3czI2LjI3IDExLjc4NyAyNi4yNyAyNi4yN3ptLTI2LjI3Mi0xMTcuOTdjLTIwLjIwNSAwLTM2LjY0Mi0xNi40MzQtMzYuNjQyLTM2LjYzOCAwLTIwLjIwNSAxNi40MzctMzYuNjQyIDM2LjY0Mi0zNi42NDIgMjAuMjA0IDAgMzYuNjQxIDE2LjQzNyAzNi42NDEgMzYuNjQyIDAgMjAuMjA0LTE2LjQzNyAzNi42MzgtMzYuNjQxIDM2LjYzOHptMTMxLjgzMSA2Ny4xNzljLTE0LjQ4NyAwLTI2LjI3LTExLjc4OC0yNi4yNy0yNi4yNzFzMTEuNzgzLTI2LjI3IDI2LjI3LTI2LjI3IDI2LjI3IDExLjc4NyAyNi4yNyAyNi4yN2MwIDE0LjQ4My0xMS43ODMgMjYuMjcxLTI2LjI3IDI2LjI3MXonCiAgICAgICAgICBzdHlsZT0nZmlsbDojMjMxZjIwJy8+Cjwvc3ZnPg==">
+      <bpmn:extensionElements>
+        <zeebe:properties>
+          <zeebe:property name="inbound.type" value="io.camunda:connector-kafka-inbound:1" />
+          <zeebe:property name="authenticationType" value="credentials" />
+          <zeebe:property name="topic.bootstrapServers" value="redpanda:9092" />
+          <zeebe:property name="topic.topicName" value="disbursement-confirmations" />
+          <zeebe:property name="groupId" value="loan-approval-disbursement-confirmations" />
+          <zeebe:property name="autoOffsetReset" value="latest" />
+          <zeebe:property name="schemaStrategy.type" value="noSchema" />
+          <zeebe:property name="consumeUnmatchedEvents" value="true" />
+          <zeebe:property name="correlationKeyExpression" value="=value.customerId" />
+          <zeebe:property name="deduplicationModeManualFlag" value="false" />
+          <zeebe:property name="deduplicationMode" value="AUTO" />
+          <zeebe:property name="resultVariable" value="" />
+          <zeebe:property name="resultExpression" value="={disbursementSuccess: value.disbursementSuccess, disbursementRef: value.disbursementRef, disbursementFailureReason: value.failureReason}" />
+        </zeebe:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ToWaitConfirmation</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToDisbursementGateway</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1sfn2c4" messageRef="Message_DisbursementConfirmed" />
+    </bpmn:intermediateCatchEvent>
   </bpmn:process>
-  <bpmn:error id="Error_DisbursementFailed" name="DisbursementFailed" errorCode="DISBURSEMENT_FAILED" />
+  <bpmn:message id="Message_DisbursementConfirmed" name="disbursement-confirmed" zeebe:modelerTemplate="io.camunda.connectors.inbound.KafkaIntermediate.v1">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=customerId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="LoanApprovalProcess">
       <bpmndi:BPMNShape id="StartEvent_LoanReceived_di" bpmnElement="StartEvent_LoanReceived">
@@ -115,30 +159,6 @@
         <dc:Bounds x="540" y="95" width="50" height="50" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_MergeDisbursement_di" bpmnElement="Gateway_MergeDisbursement" isMarkerVisible="true">
-        <dc:Bounds x="665" y="95" width="50" height="50" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Disbursement_di" bpmnElement="Task_Disbursement">
-        <dc:Bounds x="765" y="80" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Boundary_DisbursementFailed_di" bpmnElement="Boundary_DisbursementFailed">
-        <dc:Bounds x="797" y="142" width="36" height="36" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_Approved_di" bpmnElement="EndEvent_Approved">
-        <dc:Bounds x="915" y="102" width="36" height="36" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Compensate_di" bpmnElement="Task_Compensate">
-        <dc:Bounds x="765" y="240" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_Compensated_di" bpmnElement="EndEvent_Compensated">
-        <dc:Bounds x="915" y="262" width="36" height="36" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="UserTask_ManualReview_di" bpmnElement="UserTask_ManualReview">
         <dc:Bounds x="515" y="400" width="100" height="80" />
         <bpmndi:BPMNLabel />
@@ -147,13 +167,45 @@
         <dc:Bounds x="665" y="415" width="50" height="50" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_MergeDisbursement_di" bpmnElement="Gateway_MergeDisbursement" isMarkerVisible="true">
+        <dc:Bounds x="665" y="95" width="50" height="50" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_MergeRejected_di" bpmnElement="Gateway_MergeRejected" isMarkerVisible="true">
         <dc:Bounds x="915" y="343" width="50" height="50" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_PublishDisbursementRequest_di" bpmnElement="Task_PublishDisbursementRequest">
+        <dc:Bounds x="765" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_DisbursementOutcome_di" bpmnElement="Gateway_DisbursementOutcome" isMarkerVisible="true">
+        <dc:Bounds x="1000" y="95" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="980" y="65" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_Approved_di" bpmnElement="EndEvent_Approved">
+        <dc:Bounds x="1100" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Compensate_di" bpmnElement="Task_Compensate">
+        <dc:Bounds x="1000" y="240" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_Compensated_di" bpmnElement="EndEvent_Compensated">
+        <dc:Bounds x="1150" y="262" width="36" height="36" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Rejected_di" bpmnElement="EndEvent_Rejected">
         <dc:Bounds x="1015" y="350" width="36" height="36" />
         <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_034hb29_di" bpmnElement="Event_WaitDisbursementConfirmation">
+        <dc:Bounds x="915" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="888" y="138" width="90" height="20" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_ToCreditCheck_di" bpmnElement="Flow_ToCreditCheck">
         <di:waypoint x="188" y="120" />
@@ -201,17 +253,26 @@
         <di:waypoint x="965" y="368" />
         <di:waypoint x="1015" y="368" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_ToApproved_di" bpmnElement="Flow_ToApproved">
+      <bpmndi:BPMNEdge id="Flow_ToWaitConfirmation_di" bpmnElement="Flow_ToWaitConfirmation">
         <di:waypoint x="865" y="120" />
         <di:waypoint x="915" y="120" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_ToCompensate_di" bpmnElement="Flow_ToCompensate">
-        <di:waypoint x="815" y="178" />
-        <di:waypoint x="815" y="240" />
+      <bpmndi:BPMNEdge id="Flow_ToDisbursementGateway_di" bpmnElement="Flow_ToDisbursementGateway">
+        <di:waypoint x="951" y="120" />
+        <di:waypoint x="1000" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_DisbursementSucceeded_di" bpmnElement="Flow_DisbursementSucceeded">
+        <di:waypoint x="1050" y="120" />
+        <di:waypoint x="1100" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_DisbursementFailed_di" bpmnElement="Flow_DisbursementFailed">
+        <di:waypoint x="1025" y="145" />
+        <di:waypoint x="1025" y="280" />
+        <di:waypoint x="1000" y="280" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToCompensated_di" bpmnElement="Flow_ToCompensated">
-        <di:waypoint x="865" y="280" />
-        <di:waypoint x="915" y="280" />
+        <di:waypoint x="1100" y="280" />
+        <di:waypoint x="1150" y="280" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

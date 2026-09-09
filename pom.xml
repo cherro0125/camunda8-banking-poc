@@ -36,6 +36,13 @@
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
 
+    <!-- Kafka simulator standing in for the real core banking system's async
+         request/confirmation flow (see simulator/CoreBankingKafkaSimulator) -->
+    <dependency>
+      <groupId>org.springframework.kafka</groupId>
+      <artifactId>spring-kafka</artifactId>
+    </dependency>
+
     <!-- Camunda Process Test (CPT) - embedded-engine behavioral tests -->
     <dependency>
       <groupId>io.camunda</groupId>
